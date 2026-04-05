@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Copy, History, Library, WandSparkles } from "lucide-react";
+import { History, Library, WandSparkles } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 import { listProducts } from "@/features/research/products/service";
 import { listScriptDrafts, listScriptTemplates } from "@/features/scripts/service";
+import { CopyTextButton } from "@/components/copy-text-button";
 import { ScriptGeneratorForm } from "@/features/scripts/ui/script-generator-form";
 import { GlassPanel } from "@/components/glass-panel";
 import { SectionHeader } from "@/components/section-header";
@@ -134,10 +135,7 @@ export default async function ScriptsPage() {
                   <div key={item.title} className="rounded-2xl bg-white/55 p-4 dark:bg-white/6">
                     <div className="mb-3 flex items-center justify-between gap-3">
                       <p className="text-sm font-medium text-foreground">{item.title}</p>
-                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                        <Copy className="size-3.5" />
-                        copy
-                      </span>
+                      <CopyTextButton value={item.value} />
                     </div>
                     <div className="space-y-2 text-sm text-muted-foreground">
                       {splitLines(item.value, item.title === "Teleprompter" ? 3 : 4).map((line) => (
