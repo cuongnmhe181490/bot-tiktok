@@ -1,30 +1,40 @@
 import { ProductStatus } from "@prisma/client";
 import { getDb } from "@/server/db";
+import { demoProducts } from "@/server/demo-data";
+import { readOrDemo } from "@/server/read-or-demo";
 import { slugify } from "@/lib/sanitize";
 import { computeProductScore } from "@/features/research/products/helpers";
 import type { ProductInput } from "@/features/research/products/schema";
 import { getScoringSettings } from "@/features/settings/service";
 
 export async function listProducts() {
-  return getDb().product.findMany({
-    orderBy: [{ totalScore: "desc" }, { importedAt: "desc" }],
-  });
+  return readOrDemo(
+    () =>
+      getDb().product.findMany({
+        orderBy: [{ totalScore: "desc" }, { importedAt: "desc" }],
+      }),
+    () => [...demoProducts].sort((a, b) => b.totalScore - a.totalScore),
+  );
 }
 
 export async function getProductById(id: string) {
-  return getDb().product.findUnique({
-    where: { id },
-    include: {
-      scripts: {
-        orderBy: { createdAt: "desc" },
-        take: 5,
-      },
-      videos: {
-        orderBy: { publishedAt: "desc" },
-        take: 8,
-      },
-    },
-  });
+  return readOrDemo(
+    () =>
+      getDb().product.findUnique({
+        where: { id },
+        include: {
+          scripts: {
+            orderBy: { createdAt: "desc" },
+            take: 5,
+          },
+          videos: {
+            orderBy: { publishedAt: "desc" },
+            take: 8,
+          },
+        },
+      }),
+    () => null,
+  );
 }
 
 export async function createProduct(input: ProductInput) {

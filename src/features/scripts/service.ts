@@ -1,31 +1,58 @@
 import { getDb } from "@/server/db";
+import { demoProducts, demoScriptDrafts, demoScriptTemplates } from "@/server/demo-data";
+import { readOrDemo } from "@/server/read-or-demo";
 import { generateScriptPackage } from "@/features/scripts/helpers";
 import type { ScriptDraftInput } from "@/features/scripts/schema";
 
 export async function listScriptDrafts() {
-  return getDb().scriptDraft.findMany({
-    include: {
-      product: true,
-      template: true,
-    },
-    orderBy: { updatedAt: "desc" },
-  });
+  return readOrDemo(
+    () =>
+      getDb().scriptDraft.findMany({
+        include: {
+          product: true,
+          template: true,
+        },
+        orderBy: { updatedAt: "desc" },
+      }),
+    () =>
+      demoScriptDrafts.map((item) => ({
+        ...item,
+        product: demoProducts.find((product) => product.id === item.productId)!,
+        template: demoScriptTemplates.find((template) => template.id === item.templateId) ?? null,
+      })),
+  );
 }
 
 export async function getScriptDraftById(id: string) {
-  return getDb().scriptDraft.findUnique({
-    where: { id },
-    include: {
-      product: true,
-      template: true,
+  return readOrDemo(
+    () =>
+      getDb().scriptDraft.findUnique({
+        where: { id },
+        include: {
+          product: true,
+          template: true,
+        },
+      }),
+    () => {
+      const script = demoScriptDrafts.find((item) => item.id === id);
+      if (!script) return null;
+      return {
+        ...script,
+        product: demoProducts.find((product) => product.id === script.productId)!,
+        template: demoScriptTemplates.find((template) => template.id === script.templateId) ?? null,
+      };
     },
-  });
+  );
 }
 
 export async function listScriptTemplates() {
-  return getDb().scriptTemplate.findMany({
-    orderBy: { name: "asc" },
-  });
+  return readOrDemo(
+    () =>
+      getDb().scriptTemplate.findMany({
+        orderBy: { name: "asc" },
+      }),
+    () => [...demoScriptTemplates],
+  );
 }
 
 export async function createScriptDraft(input: ScriptDraftInput) {

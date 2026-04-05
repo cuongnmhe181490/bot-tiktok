@@ -1,10 +1,19 @@
 import { getDb } from "@/server/db";
+import { demoTrends } from "@/server/demo-data";
+import { readOrDemo } from "@/server/read-or-demo";
 import type { TrendInput } from "@/features/research/trends/schema";
 
 export async function listTrends() {
-  return getDb().trend.findMany({
-    orderBy: [{ discoveredAt: "desc" }, { heatLevel: "desc" }],
-  });
+  return readOrDemo(
+    () =>
+      getDb().trend.findMany({
+        orderBy: [{ discoveredAt: "desc" }, { heatLevel: "desc" }],
+      }),
+    () =>
+      [...demoTrends].sort(
+        (a, b) => b.discoveredAt.getTime() - a.discoveredAt.getTime() || b.heatLevel - a.heatLevel,
+      ),
+  );
 }
 
 export async function createTrend(input: TrendInput) {

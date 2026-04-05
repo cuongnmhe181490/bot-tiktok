@@ -1,23 +1,46 @@
 import { VideoStatus } from "@prisma/client";
 import { getDb } from "@/server/db";
+import { demoProducts, demoVideoPerformance } from "@/server/demo-data";
+import { readOrDemo } from "@/server/read-or-demo";
 import type { VideoPerformanceInput } from "@/features/analytics/schema";
 
 export async function listVideoPerformance() {
-  return getDb().videoPerformance.findMany({
-    include: {
-      product: true,
-    },
-    orderBy: { publishedAt: "desc" },
-  });
+  return readOrDemo(
+    () =>
+      getDb().videoPerformance.findMany({
+        include: {
+          product: true,
+        },
+        orderBy: { publishedAt: "desc" },
+      }),
+    () =>
+      [...demoVideoPerformance]
+        .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+        .map((item) => ({
+          ...item,
+          product: demoProducts.find((product) => product.id === item.productId)!,
+        })),
+  );
 }
 
 export async function getVideoById(id: string) {
-  return getDb().videoPerformance.findUnique({
-    where: { id },
-    include: {
-      product: true,
+  return readOrDemo(
+    () =>
+      getDb().videoPerformance.findUnique({
+        where: { id },
+        include: {
+          product: true,
+        },
+      }),
+    () => {
+      const video = demoVideoPerformance.find((item) => item.id === id);
+      if (!video) return null;
+      return {
+        ...video,
+        product: demoProducts.find((product) => product.id === video.productId)!,
+      };
     },
-  });
+  );
 }
 
 export async function createVideoPerformance(input: VideoPerformanceInput) {

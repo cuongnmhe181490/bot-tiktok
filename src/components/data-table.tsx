@@ -15,7 +15,7 @@ type DataTableColumn<T> = {
   key: string;
   header: string;
   className?: string;
-  render: (item: T) => React.ReactNode;
+  render: (item: T, index: number) => React.ReactNode;
 };
 
 type DataTableProps<T> = {
@@ -46,11 +46,11 @@ export function DataTable<T>({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((item) => (
+            {data.map((item, index) => (
               <TableRow key={getKey(item)} className="border-white/35">
                 {columns.map((column) => (
                   <TableCell key={column.key} className={column.className}>
-                    {column.render(item)}
+                    {column.render(item, index)}
                   </TableCell>
                 ))}
                 {rowHref ? (

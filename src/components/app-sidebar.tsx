@@ -2,33 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  BarChart3,
-  Clapperboard,
-  FileText,
-  Home,
-  LineChart,
-  PackageSearch,
-  Settings,
-  Sparkles,
-  TrendingUp,
-} from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { getWorkspaceRouteContext, sidebarNavItems } from "@/config/workspace-routes";
 import { cn } from "@/lib/utils";
-
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  "/dashboard": Home,
-  "/research/products": PackageSearch,
-  "/research/trends": TrendingUp,
-  "/scripts": Sparkles,
-  "/drafts": Clapperboard,
-  "/analytics": BarChart3,
-  "/reports": LineChart,
-  "/settings": Settings,
-};
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const context = getWorkspaceRouteContext(pathname);
 
   return (
     <aside className="glass-panel hidden h-[calc(100vh-2rem)] w-[300px] shrink-0 flex-col justify-between rounded-[2rem] p-5 lg:flex">
@@ -40,13 +21,15 @@ export function AppSidebar() {
           </div>
           <div>
             <p className="text-lg font-semibold text-foreground">{siteConfig.name}</p>
-            <p className="text-sm">Một nơi để nghiên cứu, viết, dựng và theo dõi content affiliate.</p>
+            <p className="text-sm">
+              Một nơi để nghiên cứu, viết, dựng và theo dõi content affiliate.
+            </p>
           </div>
         </div>
 
         <nav className="space-y-1.5">
-          {siteConfig.nav.map((item) => {
-            const Icon = iconMap[item.href] ?? FileText;
+          {sidebarNavItems.map((item) => {
+            const Icon = item.icon;
             const active =
               pathname === item.href ||
               (item.href !== "/dashboard" && pathname.startsWith(item.href));
@@ -76,11 +59,8 @@ export function AppSidebar() {
       </div>
 
       <div className="glass-soft rounded-2xl p-4">
-        <p className="text-sm font-medium text-foreground">Nhịp làm việc hôm nay</p>
-        <p className="mt-1 text-sm">
-          Ưu tiên xem top sản phẩm, tinh chỉnh hook đang thắng và chốt shot list ngắn cho
-          bản re-test.
-        </p>
+        <p className="text-sm font-medium text-foreground">{context.sidebarTitle}</p>
+        <p className="mt-1 text-sm">{context.sidebarDescription}</p>
       </div>
     </aside>
   );
