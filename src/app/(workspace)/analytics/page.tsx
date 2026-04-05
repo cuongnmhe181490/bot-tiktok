@@ -5,6 +5,7 @@ import { getAnalyticsOverview } from "@/features/analytics/service";
 import { ChartCard } from "@/components/chart-card";
 import { BarRankingChart } from "@/components/charts/bar-ranking-chart";
 import { LinePerformanceChart } from "@/components/charts/line-performance-chart";
+import { DataTrustBadges } from "@/components/data-trust-badges";
 import { DataTable } from "@/components/data-table";
 import { FilterBar } from "@/components/filter-bar";
 import { GlassPanel } from "@/components/glass-panel";
@@ -81,7 +82,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
       <SectionHeader
         eyebrow="Module 4"
         title="Analytics nội dung"
-        description="Trang này dùng để đọc hiệu suất thật: chart theo thời gian, top sản phẩm, top hook, format hiệu quả, bảng records và danh sách video nên re-test."
+        description="Trang này chỉ đọc từ dữ liệu nội bộ: manual entry, CSV import và demo data. Trust badge giúp bạn biết bản ghi nào đã đối chiếu, bản ghi nào chỉ nên xem như tham chiếu tạm."
         action={
           <Button asChild variant="outline">
             <Link href="/analytics/videos">Mở video records</Link>
@@ -192,11 +193,18 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
                 key: "title",
                 header: "Video",
                 render: (item) => (
-                  <div>
+                  <div className="space-y-2">
                     <Link href={`/analytics/videos/${item.id}`} className="font-medium text-foreground">
                       {item.title}
                     </Link>
                     <p className="text-xs">{item.product.name}</p>
+                    <DataTrustBadges
+                      source={item.source}
+                      sourceType={item.sourceType}
+                      confidenceLevel={item.confidenceLevel}
+                      verificationStatus={item.verificationStatus}
+                      isDemo={item.isDemo}
+                    />
                   </div>
                 ),
               },

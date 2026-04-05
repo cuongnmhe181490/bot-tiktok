@@ -41,3 +41,24 @@ export const videoStatusOptions = [
   { value: "KHONG_HIEU_QUA", label: "Không hiệu quả" },
   { value: "TAM_DUNG", label: "Tạm dừng" },
 ] as const satisfies readonly Option<string>[];
+
+export const sourceTypeOptions = [
+  { value: "TIKTOK_CREATIVE_CENTER", label: "TikTok Creative Center" },
+  { value: "GOOGLE_TRENDS", label: "Google Trends" },
+  { value: "MANUAL", label: "Nhập tay" },
+  { value: "CSV_IMPORT", label: "CSV import" },
+  { value: "SYSTEM_DEMO", label: "Dữ liệu demo" },
+  { value: "INTERNAL_GENERATED", label: "Gợi ý nội bộ" },
+] as const satisfies readonly Option<string>[];
+
+export const confidenceLevelOptions = [
+  { value: "LOW", label: "Tin cậy thấp" },
+  { value: "MEDIUM", label: "Tin cậy vừa" },
+  { value: "HIGH", label: "Tin cậy cao" },
+] as const satisfies readonly Option<string>[];
+
+export const verificationStatusOptions = [
+  { value: "CHUA_XAC_MINH", label: "Chưa xác minh" },
+  { value: "DA_DOI_CHIEU", label: "Đã đối chiếu" },
+  { value: "DU_LIEU_DEMO", label: "Dữ liệu demo" },
+] as const satisfies readonly Option<string>[];

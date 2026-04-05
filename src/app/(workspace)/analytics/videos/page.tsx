@@ -3,6 +3,8 @@ import { buildMetadata } from "@/lib/seo";
 import { listProducts } from "@/features/research/products/service";
 import { listVideoPerformance } from "@/features/analytics/service";
 import { VideoPerformanceForm } from "@/features/analytics/ui/video-performance-form";
+import { VideoPerformanceImport } from "@/features/analytics/ui/video-performance-import";
+import { DataTrustBadges } from "@/components/data-trust-badges";
 import { DataTable } from "@/components/data-table";
 import { FilterBar } from "@/components/filter-bar";
 import { GlassPanel } from "@/components/glass-panel";
@@ -55,7 +57,7 @@ export default async function AnalyticsVideosPage({
       <SectionHeader
         eyebrow="Nhật ký video"
         title="Bản ghi performance theo từng video"
-        description="Đây là lớp dữ liệu thô nhưng rất quan trọng: nếu log không sạch, mọi top hook, báo cáo tuần và quyết định re-test phía sau đều sẽ méo."
+        description="Analytics ở đây chỉ dùng dữ liệu bạn tự nhập, CSV import hoặc dữ liệu demo. Trust badge giúp phân biệt bản ghi đã đối chiếu, chưa xác minh hay chỉ là dữ liệu mẫu."
       />
 
       <FilterBar
@@ -93,9 +95,16 @@ export default async function AnalyticsVideosPage({
                 key: "title",
                 header: "Video",
                 render: (item) => (
-                  <div>
+                  <div className="space-y-2">
                     <p className="font-medium text-foreground">{item.title}</p>
                     <p className="text-xs">{item.product.name}</p>
+                    <DataTrustBadges
+                      source={item.source}
+                      sourceType={item.sourceType}
+                      confidenceLevel={item.confidenceLevel}
+                      verificationStatus={item.verificationStatus}
+                      isDemo={item.isDemo}
+                    />
                   </div>
                 ),
               },
@@ -140,9 +149,10 @@ export default async function AnalyticsVideosPage({
           <div>
             <h2 className="text-lg font-semibold text-foreground">Thêm bản ghi mới</h2>
             <p className="text-sm text-muted-foreground">
-              Ghi lại hook, angle, format và chỉ số sau đăng để các màn analytics và reports có dữ liệu đáng tin.
+              Ghi lại dữ liệu thật theo hướng free-only: nhập tay hoặc import CSV nội bộ. Mọi bản ghi đều có nguồn, lần nhập và trạng thái xác minh.
             </p>
           </div>
+          <VideoPerformanceImport products={products} />
           <VideoPerformanceForm products={products} />
         </GlassPanel>
       </div>

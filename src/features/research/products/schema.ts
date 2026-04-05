@@ -4,16 +4,15 @@ import {
   boundedNumber,
   normalizedSlug,
   optionalText,
-  safeDate,
   strictUrl,
   trimmedText,
 } from "@/lib/validation";
+import { provenanceSchema } from "@/lib/provenance";
 
-export const productSchema = z.object({
+export const productSchema = provenanceSchema.extend({
   name: trimmedText("Tên sản phẩm", 3, 120),
   slug: normalizedSlug.optional(),
   productUrl: strictUrl("Link sản phẩm"),
-  source: trimmedText("Nguồn", 2, 80),
   category: trimmedText("Ngành hàng", 2, 80),
   originalPrice: boundedNumber("Giá gốc", 0, 999_999_999),
   salePrice: boundedNumber("Giá sale", 0, 999_999_999),
@@ -25,7 +24,6 @@ export const productSchema = z.object({
   shopName: trimmedText("Tên shop", 2, 120),
   voucher: optionalText("Voucher", 120),
   freeship: z.boolean().default(false),
-  importedAt: safeDate("Ngày nhập"),
   shortDescription: trimmedText("Mô tả ngắn", 10, 300, true),
   internalNote: optionalText("Note nội bộ", 1000, true),
   status: z.nativeEnum(ProductStatus, {

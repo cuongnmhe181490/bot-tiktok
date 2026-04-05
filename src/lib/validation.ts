@@ -65,6 +65,9 @@ export const strictUrl = (label: string) =>
       }
     }, `${label} phải là đường dẫn hợp lệ, ví dụ https://example.com.`);
 
+export const optionalUrl = (label: string) =>
+  strictUrl(label).optional().or(z.literal("")).transform((value) => value || undefined);
+
 export const boundedNumber = (
   label: string,
   min: number,

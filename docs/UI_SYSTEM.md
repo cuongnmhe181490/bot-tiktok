@@ -36,6 +36,8 @@
 - `DataTable`
 - `FilterBar`
 - `TagChip`
+- `DataTrustBadges`
+- `ProvenancePanel`
 - `DatePicker`
 - `Topbar`
 - `AppSidebar`
@@ -58,3 +60,9 @@
 - `FilterBar` trên mobile chuyển sang sheet riêng, luôn hiển thị tóm tắt filter đang bật
 - `DataTable` có chế độ thẻ xếp chồng trên mobile cho các bảng quét nhanh, chỉ giữ table đầy đủ từ `md` trở lên
 - form chia cột khi đủ rộng, còn lại xếp một cột
+
+## Trust badges
+
+- badge nguồn dữ liệu dùng màu dịu, không neon
+- badge `Gợi ý nội bộ` luôn tách khỏi badge fact data
+- `ProvenancePanel` gom nguồn, ngày thu thập, ngày nhập, ngày xác minh và link tham chiếu vào một khối đọc nhanh

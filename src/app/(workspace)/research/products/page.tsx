@@ -4,6 +4,7 @@ import { Download, Funnel, Plus, SlidersHorizontal } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 import { listProducts } from "@/features/research/products/service";
 import { ProductForm } from "@/features/research/products/ui/product-form";
+import { DataTrustBadges } from "@/components/data-trust-badges";
 import { FilterBar } from "@/components/filter-bar";
 import { GlassPanel } from "@/components/glass-panel";
 import { SectionHeader } from "@/components/section-header";
@@ -90,7 +91,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <SectionHeader
         eyebrow="Module 1"
         title="Trung tâm nghiên cứu sản phẩm"
-        description="Trang này không chỉ để lưu danh sách sản phẩm. Nó là nơi bạn quyết định món nào nên vào batch test tiếp theo dựa trên score, offer, mức giảm giá, độ dễ quay và ghi chú nội bộ."
+        description="Tất cả bản ghi trong khu này chỉ đến từ nhập tay, CSV nội bộ hoặc dữ liệu demo. Giá trị score và các chỉ số như độ dễ quay, độ bão hòa là gợi ý nội bộ để hỗ trợ quyết định."
         action={
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline">
@@ -166,9 +167,16 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 key: "name",
                 header: "Sản phẩm",
                 render: (item) => (
-                  <div>
+                  <div className="space-y-2">
                     <p className="font-medium text-foreground">{item.name}</p>
                     <p className="text-xs">{item.category} · {item.shopName}</p>
+                    <DataTrustBadges
+                      source={item.source}
+                      sourceType={item.sourceType}
+                      confidenceLevel={item.confidenceLevel}
+                      verificationStatus={item.verificationStatus}
+                      isDemo={item.isDemo}
+                    />
                   </div>
                 ),
               },
@@ -180,6 +188,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     <p className="font-mono text-sm text-foreground">{item.totalScore}/100</p>
                     <p className="text-xs text-muted-foreground">
                       {item.scoreBreakdown.split("\n")[0]}
+                    </p>
+                    <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                      Gợi ý nội bộ
                     </p>
                   </div>
                 ),
@@ -233,7 +244,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <div>
               <h2 className="text-lg font-semibold text-foreground">Top sản phẩm nên xem trước</h2>
               <p className="text-sm text-muted-foreground">
-                Nhóm đang có score đẹp nhất trong bộ lọc hiện tại.
+                Nhóm đang có score tốt nhất trong bộ lọc hiện tại. Score chỉ là lớp gợi ý nội bộ, không phải dữ liệu từ nền tảng.
               </p>
             </div>
             <div className="space-y-3">
@@ -249,6 +260,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     <TagChip tone="success">{item.totalScore}/100</TagChip>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">{item.shortDescription}</p>
+                  <div className="mt-3">
+                    <DataTrustBadges
+                      source={item.source}
+                      sourceType={item.sourceType}
+                      confidenceLevel={item.confidenceLevel}
+                      verificationStatus={item.verificationStatus}
+                      isDemo={item.isDemo}
+                    />
+                  </div>
                   <p className="mt-2 text-xs text-muted-foreground whitespace-pre-line">
                     {item.scoreBreakdown}
                   </p>
@@ -261,7 +281,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <div>
               <h2 className="text-lg font-semibold text-foreground">Quick add product</h2>
               <p className="text-sm text-muted-foreground">
-                Thêm nhanh sản phẩm mới với validation đầy đủ ở cả client và server. Tên, mô tả, note và URL đều được kiểm chặt.
+                Thêm nhanh bản ghi sản phẩm với metadata nguồn rõ ràng: dữ liệu tham chiếu tách riêng khỏi lớp scoring nội bộ.
               </p>
             </div>
             <ProductForm />

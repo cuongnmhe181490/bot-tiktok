@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import { getVideoById, listVideoPerformance } from "@/features/analytics/service";
 import { getVideoStatusLabel } from "@/lib/labels";
+import { DataTrustBadges } from "@/components/data-trust-badges";
 import { GlassPanel } from "@/components/glass-panel";
 import { KPIBlock } from "@/components/kpi-block";
+import { ProvenancePanel } from "@/components/provenance-panel";
 import { SectionHeader } from "@/components/section-header";
 import { TagChip } from "@/components/tag-chip";
 
@@ -71,6 +73,13 @@ export default async function VideoDetailPage({
         <TagChip tone={getVideoTone(video.status)}>{getVideoStatusLabel(video.status)}</TagChip>
         <TagChip>{video.productGroup}</TagChip>
         <TagChip tone="info">{winner}</TagChip>
+        <DataTrustBadges
+          source={video.source}
+          sourceType={video.sourceType}
+          confidenceLevel={video.confidenceLevel}
+          verificationStatus={video.verificationStatus}
+          isDemo={video.isDemo}
+        />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -105,6 +114,20 @@ export default async function VideoDetailPage({
               ))}
             </div>
           </GlassPanel>
+
+          <ProvenancePanel
+            source={video.source}
+            sourceType={video.sourceType}
+            collectedAt={video.collectedAt}
+            importedAt={video.importedAt}
+            lastVerifiedAt={video.lastVerifiedAt}
+            confidenceLevel={video.confidenceLevel}
+            verificationStatus={video.verificationStatus}
+            isDemo={video.isDemo}
+            externalReferenceUrl={video.externalReferenceUrl}
+            notes={video.notes}
+            title="Nguồn dữ liệu"
+          />
 
           <GlassPanel className="space-y-4">
             <h2 className="text-lg font-semibold text-foreground">Winner / loser flags</h2>

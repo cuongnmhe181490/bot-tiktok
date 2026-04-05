@@ -82,6 +82,10 @@ export default async function ReportsPage() {
 
         <GlassPanel className="space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Recommendation summary</h2>
+          <div className="flex flex-wrap gap-2">
+            <TagChip tone="warning">Gợi ý nội bộ</TagChip>
+            <TagChip>Dựa trên dữ liệu analytics hiện có</TagChip>
+          </div>
           <div className="grid gap-3 md:grid-cols-2">
             {[
               "Giữ các hook đang kéo CTR tốt và thử thêm ít nhất một format khác để kiểm tra độ bền.",

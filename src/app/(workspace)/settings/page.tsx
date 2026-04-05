@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
-import { getScoringSettings } from "@/features/settings/service";
+import { getDataSettings, getScoringSettings } from "@/features/settings/service";
+import { DataSettingsForm } from "@/features/settings/ui/data-settings-form";
 import { SeedResetDialog } from "@/features/settings/ui/seed-reset-dialog";
 import { ScoringSettingsForm } from "@/features/settings/ui/scoring-settings-form";
 import { GlassPanel } from "@/components/glass-panel";
@@ -16,7 +17,7 @@ export const metadata: Metadata = buildMetadata(
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const settings = await getScoringSettings();
+  const [settings, dataSettings] = await Promise.all([getScoringSettings(), getDataSettings()]);
 
   return (
     <div className="space-y-6">
@@ -28,6 +29,21 @@ export default async function SettingsPage() {
 
       <div className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
         <div className="space-y-4">
+          <GlassPanel className="space-y-5">
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">Chế độ dữ liệu</h2>
+              <p className="text-sm text-muted-foreground">
+                Hệ thống này chỉ dùng nguồn miễn phí và dữ liệu nội bộ: TikTok Creative Center nhập tay, Google Trends, CSV nội bộ, manual entry và dữ liệu demo.
+              </p>
+            </div>
+            <DataSettingsForm
+              initialValues={{
+                freeOnlyMode: dataSettings.freeOnlyMode,
+                showDemoData: dataSettings.showDemoData,
+              }}
+            />
+          </GlassPanel>
+
           <GlassPanel id="scoring" className="space-y-5">
             <div>
               <h2 className="text-lg font-semibold text-foreground">Trọng số chấm điểm</h2>
@@ -92,8 +108,27 @@ export default async function SettingsPage() {
           <GlassPanel className="space-y-4">
             <h2 className="text-lg font-semibold text-foreground">Import / Export</h2>
             <p className="text-sm text-muted-foreground">
-              CSV export hiện có ở khu nghiên cứu sản phẩm. Kiến trúc route handlers đã để sẵn chỗ để mở rộng cho analytics và reports khi cần.
+              Dùng các mẫu CSV để nhập trend từ Google Trends hoặc chuẩn hóa import nội bộ. Bản đầu không phụ thuộc API trả phí hay connector bên ngoài.
             </p>
+            <div className="flex flex-wrap gap-2">
+              <TagChip tone="info">Google Trends CSV</TagChip>
+              <TagChip>Manual Entry</TagChip>
+              <TagChip tone="warning">Creative Center quick import</TagChip>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href="/api/trends/template?kind=google"
+                className="inline-flex rounded-full bg-white/60 px-4 py-2 text-sm text-foreground transition hover:bg-white/80 dark:bg-white/8 dark:hover:bg-white/12"
+              >
+                Tải mẫu CSV Google Trends
+              </a>
+              <a
+                href="/api/trends/template?kind=creative"
+                className="inline-flex rounded-full bg-white/60 px-4 py-2 text-sm text-foreground transition hover:bg-white/80 dark:bg-white/8 dark:hover:bg-white/12"
+              >
+                Tải mẫu CSV Creative Center
+              </a>
+            </div>
           </GlassPanel>
 
           <GlassPanel className="space-y-4">
@@ -102,7 +137,7 @@ export default async function SettingsPage() {
               <li>- Tên sản phẩm: 3-120 ký tự</li>
               <li>- Mô tả ngắn: 10-300 ký tự</li>
               <li>- Note nội bộ: tối đa 1000 ký tự</li>
-              <li>- Chặn text rỗng nghĩa, ký tự lặp rác, URL sai và số âm không hợp lệ</li>
+              <li>- Chặn text rỗng nghĩa, ký tự lặp rác, URL sai, enum nguồn sai và file CSV lỗi cơ bản</li>
             </ul>
           </GlassPanel>
 

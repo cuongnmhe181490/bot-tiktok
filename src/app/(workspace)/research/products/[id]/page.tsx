@@ -5,8 +5,10 @@ import { ArrowRight, CircleAlert, NotebookText, Sparkles } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 import { getProductById } from "@/features/research/products/service";
 import { getProductStatusLabel } from "@/lib/labels";
+import { DataTrustBadges } from "@/components/data-trust-badges";
 import { GlassPanel } from "@/components/glass-panel";
 import { KPIBlock } from "@/components/kpi-block";
+import { ProvenancePanel } from "@/components/provenance-panel";
 import { SectionHeader } from "@/components/section-header";
 import { TagChip } from "@/components/tag-chip";
 import { Button } from "@/components/ui/button";
@@ -114,6 +116,13 @@ export default async function ProductDetailPage({
         <TagChip tone="info">{product.category}</TagChip>
         <TagChip tone="success">Score {product.totalScore}/100</TagChip>
         <TagChip>{product.shopName}</TagChip>
+        <DataTrustBadges
+          source={product.source}
+          sourceType={product.sourceType}
+          confidenceLevel={product.confidenceLevel}
+          verificationStatus={product.verificationStatus}
+          isDemo={product.isDemo}
+        />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -148,6 +157,10 @@ export default async function ProductDetailPage({
         <div className="space-y-4">
           <GlassPanel className="space-y-4">
             <h2 className="text-lg font-semibold text-foreground">Vì sao điểm đang ở mức này</h2>
+            <div className="flex flex-wrap gap-2">
+              <TagChip tone="warning">Gợi ý nội bộ</TagChip>
+              <TagChip>Không phải dữ liệu từ nền tảng</TagChip>
+            </div>
             <div className="grid gap-3 md:grid-cols-2">
               {scoreReasons.map((item) => (
                 <div key={item} className="rounded-2xl bg-white/55 p-4 dark:bg-white/6">
@@ -173,6 +186,9 @@ export default async function ProductDetailPage({
 
           <GlassPanel className="space-y-4">
             <h2 className="text-lg font-semibold text-foreground">Góc nội dung nên thử</h2>
+            <div className="flex flex-wrap gap-2">
+              <TagChip tone="warning">Gợi ý nội bộ</TagChip>
+            </div>
             <div className="space-y-3">
               {angles.map((item) => (
                 <div key={item} className="rounded-2xl bg-white/55 p-4 dark:bg-white/6">
@@ -214,6 +230,20 @@ export default async function ProductDetailPage({
                 : "Sản phẩm này chưa hẳn yếu, nhưng cần chọn đúng pain point và hook mở đầu. Không nên bước vào batch quay nếu chưa chốt được góc nhìn rõ."}
             </p>
           </GlassPanel>
+
+          <ProvenancePanel
+            source={product.source}
+            sourceType={product.sourceType}
+            collectedAt={product.collectedAt}
+            importedAt={product.importedAt}
+            lastVerifiedAt={product.lastVerifiedAt}
+            confidenceLevel={product.confidenceLevel}
+            verificationStatus={product.verificationStatus}
+            isDemo={product.isDemo}
+            externalReferenceUrl={product.externalReferenceUrl}
+            notes={product.notes}
+            title="Dữ liệu tham chiếu"
+          />
 
           <GlassPanel className="space-y-4">
             <h2 className="text-lg font-semibold text-foreground">Đối tượng phù hợp</h2>

@@ -59,6 +59,7 @@ export default async function ScriptDetailPage({
         </TagChip>
         <TagChip>{getToneLabel(draft.tone)}</TagChip>
         <TagChip tone="info">{getGoalLabel(draft.goal)}</TagChip>
+        <TagChip tone="warning">Gợi ý nội bộ</TagChip>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
@@ -121,7 +122,10 @@ export default async function ScriptDetailPage({
           {blocks.map((item) => (
             <GlassPanel key={item.title} className="space-y-3">
               <div className="flex items-center justify-between gap-3">
-                <h2 className="text-lg font-semibold text-foreground">{item.title}</h2>
+                <div className="space-y-1">
+                  <h2 className="text-lg font-semibold text-foreground">{item.title}</h2>
+                  <TagChip tone="warning">Gợi ý nội bộ</TagChip>
+                </div>
                 <CopyTextButton value={item.content} />
               </div>
               <pre className="whitespace-pre-wrap text-sm leading-6 text-muted-foreground">

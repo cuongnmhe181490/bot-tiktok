@@ -49,6 +49,27 @@ enum VideoStatus {
   TAM_DUNG
 }
 
+enum SourceType {
+  TIKTOK_CREATIVE_CENTER
+  GOOGLE_TRENDS
+  MANUAL
+  CSV_IMPORT
+  SYSTEM_DEMO
+  INTERNAL_GENERATED
+}
+
+enum ConfidenceLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum VerificationStatus {
+  CHUA_XAC_MINH
+  DA_DOI_CHIEU
+  DU_LIEU_DEMO
+}
+
 model ScoringSettings {
   id                String   @id @default("scoring-default")
   easeWeight        Int      @default(20)
@@ -59,12 +80,21 @@ model ScoringSettings {
   updatedAt         DateTime @updatedAt
 }
 
+model DataSettings {
+  id           String   @id @default("data-settings-default")
+  freeOnlyMode Boolean  @default(true)
+  showDemoData Boolean  @default(true)
+  updatedAt    DateTime @updatedAt
+}
+
 model Product {
   id                 String        @id @default(cuid())
   name               String
   slug               String        @unique
   productUrl         String
   source             String
+  sourceType         SourceType    @default(MANUAL)
+  collectedAt        DateTime?
   category           String
   originalPrice      Float
   salePrice          Float
@@ -77,6 +107,12 @@ model Product {
   voucher            String?
   freeship           Boolean       @default(false)
   importedAt         DateTime
+  lastVerifiedAt     DateTime?
+  confidenceLevel    ConfidenceLevel @default(MEDIUM)
+  verificationStatus VerificationStatus @default(CHUA_XAC_MINH)
+  isDemo             Boolean       @default(false)
+  notes              String?
+  externalReferenceUrl String?
   shortDescription   String
   internalNote       String?
   status             ProductStatus @default(MOI)
@@ -93,19 +129,31 @@ model Product {
 }
 
 model Trend {
-  id              String    @id @default(cuid())
-  name            String
-  trendType       TrendType
-  description     String
-  suitableNiche   String
-  referenceUrl    String?
-  heatLevel       Int
-  applicability   Int
-  saturationLevel Int
-  discoveredAt    DateTime
-  note            String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id                String             @id @default(cuid())
+  name              String
+  trendType         TrendType
+  source            String
+  sourceType        SourceType         @default(MANUAL)
+  description       String
+  suitableNiche     String
+  externalReferenceUrl String?
+  region            String?
+  timeWindow        String?
+  trendScore        Int?
+  heatLevel         Int
+  applicability     Int
+  saturationLevel   Int
+  discoveredAt      DateTime
+  collectedAt       DateTime?
+  importedAt        DateTime           @default(now())
+  lastVerifiedAt    DateTime?
+  confidenceLevel   ConfidenceLevel    @default(MEDIUM)
+  verificationStatus VerificationStatus @default(CHUA_XAC_MINH)
+  isDemo            Boolean            @default(false)
+  notes             String?
+  note              String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 }
 
 model ScriptTemplate {
@@ -169,8 +217,18 @@ model DraftProject {
 model VideoPerformance {
   id              String      @id @default(cuid())
   title           String
+  source          String
+  sourceType      SourceType  @default(MANUAL)
   publishedAt     DateTime
   videoUrl        String
+  collectedAt     DateTime?
+  importedAt      DateTime    @default(now())
+  lastVerifiedAt  DateTime?
+  confidenceLevel ConfidenceLevel @default(MEDIUM)
+  verificationStatus VerificationStatus @default(CHUA_XAC_MINH)
+  isDemo          Boolean     @default(false)
+  notes           String?
+  externalReferenceUrl String?
   hook            String
   angle           String
   format          String

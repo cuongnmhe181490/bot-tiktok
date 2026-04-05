@@ -7,6 +7,17 @@ Web app tiếng Việt, production-minded, mobile-first cho vận hành content 
 3. Chuẩn bị video nháp / shot list / subtitle package
 4. Dashboard theo dõi hiệu suất content affiliate
 
+## Free-only data stack
+
+Từ bản hiện tại, toàn bộ hệ thống chỉ dùng:
+
+1. TikTok Creative Center theo hướng nhập tay hoặc quick import
+2. Google Trends theo hướng CSV công khai
+3. Dữ liệu nội bộ do người dùng nhập
+4. Dữ liệu mẫu của hệ thống
+
+App không phụ thuộc API trả phí để chạy bản đầu. Các lớp như score sản phẩm, recommendation summary, suggested hooks hoặc retest recommendation được hiển thị như `Gợi ý nội bộ`, không được trình bày như dữ liệu thật từ nền tảng.
+
 ## Stack
 
 - Next.js 16 App Router
@@ -114,3 +125,7 @@ Seed hiện tại tạo:
 - [SEO notes](./docs/SEO_NOTES.md)
 - [Architecture](./docs/ARCHITECTURE.md)
 - [Content guide](./docs/CONTENT_GUIDE_VI.md)
+- [Free data stack](./docs/FREE_DATA_STACK.md)
+- [Data provenance](./docs/DATA_PROVENANCE.md)
+- [Import guide](./docs/IMPORT_GUIDE.md)
+- [Trust system](./docs/TRUST_SYSTEM.md)

@@ -10,3 +10,12 @@ export const scoringSettingsSchema = z.object({
 });
 
 export type ScoringSettingsInput = z.infer<typeof scoringSettingsSchema>;
+
+export const dataSettingsSchema = z.object({
+  freeOnlyMode: z.boolean().refine((value) => value === true, {
+    message: "Hệ thống hiện chỉ hỗ trợ chế độ dữ liệu free-only.",
+  }),
+  showDemoData: z.boolean(),
+});
+
+export type DataSettingsInput = z.infer<typeof dataSettingsSchema>;

@@ -7,8 +7,9 @@ import {
   strictUrl,
   trimmedText,
 } from "@/lib/validation";
+import { provenanceSchema } from "@/lib/provenance";
 
-export const videoPerformanceSchema = z.object({
+export const videoPerformanceSchema = provenanceSchema.extend({
   title: trimmedText("Tiêu đề", 3, 160),
   productId: trimmedText("Sản phẩm", 3, 80),
   productGroup: trimmedText("Nhóm sản phẩm", 2, 120),

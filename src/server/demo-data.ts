@@ -1,9 +1,13 @@
 import {
+  ConfidenceLevel,
   GoalType,
   ProductStatus,
+  SourceType,
   ToneType,
   TrendType,
+  VerificationStatus,
   VideoStatus,
+  type DataSettings,
   type DraftProject,
   type Product,
   type ScoringSettings,
@@ -77,6 +81,13 @@ export const demoScoringSettings: ScoringSettings = {
   updatedAt: new Date("2026-04-01T09:00:00.000Z"),
 };
 
+export const demoDataSettings: DataSettings = {
+  id: "data-settings-default",
+  freeOnlyMode: true,
+  showDemoData: true,
+  updatedAt: new Date("2026-04-01T09:00:00.000Z"),
+};
+
 export const demoProducts: Product[] = productNames.map((name, index) => {
   const originalPrice = 199_000 + index * 35_000;
   const salePrice = Math.round(originalPrice * (0.68 + (index % 4) * 0.04));
@@ -97,7 +108,19 @@ export const demoProducts: Product[] = productNames.map((name, index) => {
     name,
     slug: slugify(name),
     productUrl: `https://example.com/products/${index + 1}`,
-    source: ["TikTok Shop", "Shopee Affiliate", "Lazada", "Nguồn nội bộ"][index % 4]!,
+    source: [
+      "TikTok Creative Center",
+      "CSV Upload",
+      "Manual Entry",
+      "System Demo",
+    ][index % 4]!,
+    sourceType: [
+      SourceType.TIKTOK_CREATIVE_CENTER,
+      SourceType.CSV_IMPORT,
+      SourceType.MANUAL,
+      SourceType.SYSTEM_DEMO,
+    ][index % 4]!,
+    collectedAt: new Date(2026, 2, (index % 24) + 1),
     category: categories[index % categories.length]!,
     originalPrice,
     salePrice,
@@ -110,6 +133,30 @@ export const demoProducts: Product[] = productNames.map((name, index) => {
     voucher: index % 2 === 0 ? "Giảm thêm 15K" : "Voucher 8%",
     freeship: index % 3 !== 0,
     importedAt: new Date(2026, 2, (index % 27) + 1),
+    lastVerifiedAt: index % 4 === 2 ? null : new Date(2026, 3, (index % 5) + 1),
+    confidenceLevel: [
+      ConfidenceLevel.HIGH,
+      ConfidenceLevel.MEDIUM,
+      ConfidenceLevel.LOW,
+      ConfidenceLevel.MEDIUM,
+    ][index % 4]!,
+    verificationStatus: [
+      VerificationStatus.DA_DOI_CHIEU,
+      VerificationStatus.CHUA_XAC_MINH,
+      VerificationStatus.CHUA_XAC_MINH,
+      VerificationStatus.DU_LIEU_DEMO,
+    ][index % 4]!,
+    isDemo: index % 4 === 3,
+    notes:
+      index % 4 === 0
+        ? "Thông tin giá và review được đối chiếu từ ảnh chụp Creative Center cùng ngày."
+        : index % 4 === 1
+          ? "Bản ghi nhập từ CSV nội bộ, cần đối chiếu lại giá sale trước khi chạy mạnh."
+          : index % 4 === 2
+            ? "Bản ghi người dùng nhập tay để giữ dấu vết nghiên cứu ban đầu."
+            : "Bản ghi demo để mô phỏng studio khi chưa có dữ liệu thật.",
+    externalReferenceUrl:
+      index % 4 === 0 ? `https://creativecenter.tiktok.com/example/${index + 1}` : null,
     shortDescription: `${name} dễ demo, lợi ích rõ và có mức sale đủ gọn để thử nhiều angle affiliate.`,
     internalNote:
       index % 4 === 0
@@ -137,14 +184,58 @@ export const demoTrends: Trend[] = trendNames.map((name, index) => ({
   id: `demo-trend-${index + 1}`,
   name,
   trendType: Object.values(TrendType)[index % Object.values(TrendType).length]!,
+  source: [
+    "TikTok Creative Center",
+    "Google Trends",
+    "Manual Entry",
+    "System Demo",
+  ][index % 4]!,
+  sourceType: [
+    SourceType.TIKTOK_CREATIVE_CENTER,
+    SourceType.GOOGLE_TRENDS,
+    SourceType.MANUAL,
+    SourceType.SYSTEM_DEMO,
+  ][index % 4]!,
   description:
     "Trend phù hợp cho video affiliate ngắn, giữ nhịp xem tốt và dễ biến tấu theo từng ngành hàng.",
   suitableNiche: categories[index % categories.length]!,
-  referenceUrl: `https://example.com/trends/${index + 1}`,
+  externalReferenceUrl:
+    index % 4 === 1
+      ? `https://trends.google.com/trends/explore?q=trend-${index + 1}`
+      : index % 4 === 0
+        ? `https://creativecenter.tiktok.com/example/trend-${index + 1}`
+        : null,
+  region: index % 4 === 1 ? "VN" : null,
+  timeWindow: index % 4 === 1 ? "7 ngày gần nhất" : null,
+  trendScore: index % 4 === 1 ? 68 + (index % 20) : null,
   heatLevel: 6 + (index % 5),
   applicability: 5 + (index % 4),
   saturationLevel: 3 + (index % 5),
   discoveredAt: new Date(2026, 2, 15 + (index % 10)),
+  collectedAt: new Date(2026, 2, 14 + (index % 10)),
+  importedAt: new Date(2026, 2, 15 + (index % 10)),
+  lastVerifiedAt: index % 4 === 2 ? null : new Date(2026, 3, (index % 6) + 1),
+  confidenceLevel: [
+    ConfidenceLevel.HIGH,
+    ConfidenceLevel.HIGH,
+    ConfidenceLevel.LOW,
+    ConfidenceLevel.MEDIUM,
+  ][index % 4]!,
+  verificationStatus: [
+    VerificationStatus.DA_DOI_CHIEU,
+    VerificationStatus.DA_DOI_CHIEU,
+    VerificationStatus.CHUA_XAC_MINH,
+    VerificationStatus.DU_LIEU_DEMO,
+  ][index % 4]!,
+  isDemo: index % 4 === 3,
+  notes:
+    index % 4 === 0
+      ? "Bản ghi nhập nhanh từ Creative Center để bắt tín hiệu nội dung."
+      : index % 4 === 1
+        ? "Dữ liệu map từ CSV Google Trends, có score tham chiếu."
+        : index % 4 === 2
+          ? "Ghi chú tay từ quá trình lướt trend, cần đối chiếu thêm."
+          : "Dữ liệu demo để hiển thị hành vi của Trend Inbox.",
   note:
     index % 2 === 0
       ? "Nên dùng ngay cho video cần retention 3 giây đầu."
@@ -265,8 +356,46 @@ export const demoVideoPerformance: VideoPerformance[] = Array.from({ length: 100
     title: `Video affiliate ${index + 1} - ${product.name}`,
     productId: product.id,
     productGroup: product.category,
+    source: [
+      "Manual Entry",
+      "CSV Upload",
+      "Manual Entry",
+      "System Demo",
+    ][index % 4]!,
+    sourceType: [
+      SourceType.MANUAL,
+      SourceType.CSV_IMPORT,
+      SourceType.MANUAL,
+      SourceType.SYSTEM_DEMO,
+    ][index % 4]!,
     publishedAt: new Date(2026, 0, (index % 28) + 1),
     videoUrl: `https://example.com/videos/${index + 1}`,
+    collectedAt: new Date(2026, 0, (index % 28) + 2),
+    importedAt: new Date(2026, 0, (index % 28) + 3),
+    lastVerifiedAt: index % 4 === 0 ? new Date(2026, 1, (index % 18) + 1) : null,
+    confidenceLevel: [
+      ConfidenceLevel.HIGH,
+      ConfidenceLevel.MEDIUM,
+      ConfidenceLevel.LOW,
+      ConfidenceLevel.MEDIUM,
+    ][index % 4]!,
+    verificationStatus: [
+      VerificationStatus.DA_DOI_CHIEU,
+      VerificationStatus.CHUA_XAC_MINH,
+      VerificationStatus.CHUA_XAC_MINH,
+      VerificationStatus.DU_LIEU_DEMO,
+    ][index % 4]!,
+    isDemo: index % 4 === 3,
+    notes:
+      index % 4 === 0
+        ? "Số liệu đã đối chiếu lại với bảng tổng hợp nội bộ."
+        : index % 4 === 1
+          ? "Bản ghi import từ CSV, cần rà lại CTR nếu nguồn gốc thay đổi cách tính."
+          : index % 4 === 2
+            ? "Người dùng nhập tay sau khi chụp lại dashboard."
+            : "Bản ghi demo để mô phỏng dashboard hiệu suất.",
+    externalReferenceUrl:
+      index % 4 !== 3 ? `https://example.com/reference/video-${index + 1}` : null,
     hook: [
       "Nếu bạn đang phân vân, xem hết 20 giây này.",
       "Điểm đáng thử nhất của món này nằm ở trải nghiệm thật.",

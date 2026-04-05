@@ -3,22 +3,27 @@ import { getDb } from "@/server/db";
 import { demoProducts, demoScriptDrafts, demoVideoPerformance } from "@/server/demo-data";
 import { readOrDemo } from "@/server/read-or-demo";
 import { slugify } from "@/lib/sanitize";
+import { normalizeVerificationStatus } from "@/lib/provenance";
 import { computeProductScore } from "@/features/research/products/helpers";
 import type { ProductInput } from "@/features/research/products/schema";
-import { getScoringSettings } from "@/features/settings/service";
+import { getDataSettings, getScoringSettings } from "@/features/settings/service";
 
 export async function listProducts() {
-  return readOrDemo(
+  const settings = await getDataSettings();
+  const products = await readOrDemo(
     () =>
       getDb().product.findMany({
         orderBy: [{ totalScore: "desc" }, { importedAt: "desc" }],
       }),
     () => [...demoProducts].sort((a, b) => b.totalScore - a.totalScore),
   );
+
+  return settings.showDemoData ? products : products.filter((item) => !item.isDemo);
 }
 
 export async function getProductById(id: string) {
-  return readOrDemo(
+  const settings = await getDataSettings();
+  const product = await readOrDemo(
     () =>
       getDb().product.findUnique({
         where: { id },
@@ -50,6 +55,9 @@ export async function getProductById(id: string) {
       };
     },
   );
+
+  if (!settings.showDemoData && product?.isDemo) return null;
+  return product;
 }
 
 export async function createProduct(input: ProductInput) {
@@ -71,6 +79,8 @@ export async function createProduct(input: ProductInput) {
       slug: input.slug || slugify(input.name),
       productUrl: input.productUrl,
       source: input.source,
+      sourceType: input.sourceType,
+      collectedAt: input.collectedAt ?? null,
       category: input.category,
       originalPrice: input.originalPrice,
       salePrice: input.salePrice,
@@ -83,6 +93,12 @@ export async function createProduct(input: ProductInput) {
       voucher: input.voucher ?? null,
       freeship: input.freeship,
       importedAt: input.importedAt,
+      lastVerifiedAt: input.lastVerifiedAt ?? null,
+      confidenceLevel: input.confidenceLevel,
+      verificationStatus: normalizeVerificationStatus(input),
+      isDemo: input.sourceType === "SYSTEM_DEMO",
+      notes: input.notes ?? null,
+      externalReferenceUrl: input.externalReferenceUrl ?? null,
       shortDescription: input.shortDescription,
       internalNote: input.internalNote ?? null,
       status: input.status,

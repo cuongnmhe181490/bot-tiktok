@@ -1,4 +1,13 @@
-import { goalOptions, productStatusOptions, toneOptions, trendTypeOptions, videoStatusOptions } from "@/config/domain";
+import {
+  confidenceLevelOptions,
+  goalOptions,
+  productStatusOptions,
+  sourceTypeOptions,
+  toneOptions,
+  trendTypeOptions,
+  verificationStatusOptions,
+  videoStatusOptions,
+} from "@/config/domain";
 
 function lookupLabel(
   options: readonly { value: string; label: string }[],
@@ -29,3 +38,14 @@ export function getTrendTypeLabel(value: string) {
   return lookupLabel(trendTypeOptions, value, value.replaceAll("_", " "));
 }
 
+export function getSourceTypeLabel(value: string) {
+  return lookupLabel(sourceTypeOptions, value, value.replaceAll("_", " "));
+}
+
+export function getConfidenceLevelLabel(value: string) {
+  return lookupLabel(confidenceLevelOptions, value, value.replaceAll("_", " "));
+}
+
+export function getVerificationStatusLabel(value: string) {
+  return lookupLabel(verificationStatusOptions, value, value.replaceAll("_", " "));
+}

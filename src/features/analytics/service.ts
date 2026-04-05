@@ -2,10 +2,13 @@ import { VideoStatus } from "@prisma/client";
 import { getDb } from "@/server/db";
 import { demoProducts, demoVideoPerformance } from "@/server/demo-data";
 import { readOrDemo } from "@/server/read-or-demo";
+import { normalizeVerificationStatus } from "@/lib/provenance";
 import type { VideoPerformanceInput } from "@/features/analytics/schema";
+import { getDataSettings } from "@/features/settings/service";
 
 export async function listVideoPerformance() {
-  return readOrDemo(
+  const settings = await getDataSettings();
+  const videos = await readOrDemo(
     () =>
       getDb().videoPerformance.findMany({
         include: {
@@ -21,10 +24,13 @@ export async function listVideoPerformance() {
           product: demoProducts.find((product) => product.id === item.productId)!,
         })),
   );
+
+  return settings.showDemoData ? videos : videos.filter((item) => !item.isDemo);
 }
 
 export async function getVideoById(id: string) {
-  return readOrDemo(
+  const settings = await getDataSettings();
+  const video = await readOrDemo(
     () =>
       getDb().videoPerformance.findUnique({
         where: { id },
@@ -41,6 +47,9 @@ export async function getVideoById(id: string) {
       };
     },
   );
+
+  if (!settings.showDemoData && video?.isDemo) return null;
+  return video;
 }
 
 export async function createVideoPerformance(input: VideoPerformanceInput) {
@@ -49,8 +58,18 @@ export async function createVideoPerformance(input: VideoPerformanceInput) {
       title: input.title,
       productId: input.productId,
       productGroup: input.productGroup,
+      source: input.source,
+      sourceType: input.sourceType,
       publishedAt: input.publishedAt,
       videoUrl: input.videoUrl,
+      collectedAt: input.collectedAt ?? null,
+      importedAt: input.importedAt,
+      lastVerifiedAt: input.lastVerifiedAt ?? null,
+      confidenceLevel: input.confidenceLevel,
+      verificationStatus: normalizeVerificationStatus(input),
+      isDemo: input.sourceType === "SYSTEM_DEMO",
+      notes: input.notes ?? null,
+      externalReferenceUrl: input.externalReferenceUrl ?? null,
       hook: input.hook,
       angle: input.angle,
       format: input.format,

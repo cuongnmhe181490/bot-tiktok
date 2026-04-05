@@ -1,10 +1,15 @@
 "use client";
 
-import { ProductStatus } from "@prisma/client";
+import { ConfidenceLevel, ProductStatus, SourceType, VerificationStatus } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
-import { productStatusOptions } from "@/config/domain";
+import {
+  confidenceLevelOptions,
+  productStatusOptions,
+  sourceTypeOptions,
+  verificationStatusOptions,
+} from "@/config/domain";
 import { postJson } from "@/lib/http";
 import { productSchema, type ProductInput } from "@/features/research/products/schema";
 import { DatePicker } from "@/components/date-picker";
@@ -25,7 +30,9 @@ const defaultValues: ProductInput = {
   name: "",
   slug: "",
   productUrl: "",
-  source: "TikTok Shop",
+  source: "Manual Entry",
+  sourceType: SourceType.MANUAL,
+  collectedAt: new Date(),
   category: "",
   originalPrice: 0,
   salePrice: 0,
@@ -38,6 +45,11 @@ const defaultValues: ProductInput = {
   voucher: "",
   freeship: true,
   importedAt: new Date(),
+  lastVerifiedAt: undefined,
+  confidenceLevel: ConfidenceLevel.LOW,
+  verificationStatus: VerificationStatus.CHUA_XAC_MINH,
+  externalReferenceUrl: "",
+  notes: "",
   shortDescription: "",
   internalNote: "",
   status: ProductStatus.MOI,
@@ -54,7 +66,18 @@ export function ProductForm() {
   });
 
   const importedAt = useWatch({ control: form.control, name: "importedAt" }) as Date;
+  const collectedAt = useWatch({ control: form.control, name: "collectedAt" }) as Date | undefined;
+  const lastVerifiedAt = useWatch({ control: form.control, name: "lastVerifiedAt" }) as Date | undefined;
   const status = useWatch({ control: form.control, name: "status" }) as ProductStatus;
+  const sourceType = useWatch({ control: form.control, name: "sourceType" }) as SourceType;
+  const confidenceLevel = useWatch({
+    control: form.control,
+    name: "confidenceLevel",
+  }) as ConfidenceLevel;
+  const verificationStatus = useWatch({
+    control: form.control,
+    name: "verificationStatus",
+  }) as VerificationStatus;
 
   const errorMessages = Object.values(form.formState.errors)
     .map((error) => error?.message)
@@ -94,20 +117,109 @@ export function ProductForm() {
         </FormFieldShell>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <FormFieldShell label="Nguồn" required error={form.formState.errors.source?.message}>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <FormFieldShell
+          label="Nguồn dữ liệu"
+          required
+          description="Ví dụ: TikTok Creative Center, CSV Upload hoặc Manual Entry."
+          error={form.formState.errors.source?.message}
+        >
           <Input {...form.register("source")} />
+        </FormFieldShell>
+        <FormFieldShell label="Loại nguồn" required error={form.formState.errors.sourceType?.message}>
+          <Select
+            value={sourceType}
+            onValueChange={(value) =>
+              form.setValue("sourceType", value as SourceType, { shouldValidate: true })
+            }
+          >
+            <SelectTrigger className="h-11 rounded-2xl border-white/45 bg-white/55 dark:bg-white/8">
+              <SelectValue placeholder="Chọn loại nguồn" />
+            </SelectTrigger>
+            <SelectContent>
+              {sourceTypeOptions
+                .filter((item) => item.value !== "INTERNAL_GENERATED")
+                .map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
         </FormFieldShell>
         <FormFieldShell label="Ngành hàng" required error={form.formState.errors.category?.message}>
           <Input {...form.register("category")} />
         </FormFieldShell>
-        <FormFieldShell label="Ngày nhập" required error={form.formState.errors.importedAt?.message}>
+        <FormFieldShell label="Lần nhập hệ thống" required error={form.formState.errors.importedAt?.message}>
           <DatePicker
             value={importedAt}
             onChange={(value) =>
               form.setValue("importedAt", value ?? new Date(), { shouldValidate: true })
             }
           />
+        </FormFieldShell>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <FormFieldShell label="Lần thu thập" error={form.formState.errors.collectedAt?.message}>
+          <DatePicker
+            value={collectedAt}
+            onChange={(value) => form.setValue("collectedAt", value ?? undefined, { shouldValidate: true })}
+          />
+        </FormFieldShell>
+        <FormFieldShell label="Lần xác minh gần nhất" error={form.formState.errors.lastVerifiedAt?.message}>
+          <DatePicker
+            value={lastVerifiedAt}
+            onChange={(value) =>
+              form.setValue("lastVerifiedAt", value ?? undefined, { shouldValidate: true })
+            }
+          />
+        </FormFieldShell>
+        <FormFieldShell label="Mức độ tin cậy" required error={form.formState.errors.confidenceLevel?.message}>
+          <Select
+            value={confidenceLevel}
+            onValueChange={(value) =>
+              form.setValue("confidenceLevel", value as ConfidenceLevel, { shouldValidate: true })
+            }
+          >
+            <SelectTrigger className="h-11 rounded-2xl border-white/45 bg-white/55 dark:bg-white/8">
+              <SelectValue placeholder="Chọn mức tin cậy" />
+            </SelectTrigger>
+            <SelectContent>
+              {confidenceLevelOptions.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormFieldShell>
+        <FormFieldShell label="Trạng thái xác minh" required error={form.formState.errors.verificationStatus?.message}>
+          <Select
+            value={verificationStatus}
+            onValueChange={(value) =>
+              form.setValue("verificationStatus", value as VerificationStatus, { shouldValidate: true })
+            }
+          >
+            <SelectTrigger className="h-11 rounded-2xl border-white/45 bg-white/55 dark:bg-white/8">
+              <SelectValue placeholder="Chọn trạng thái xác minh" />
+            </SelectTrigger>
+            <SelectContent>
+              {verificationStatusOptions
+                .filter((item) => item.value !== "DU_LIEU_DEMO")
+                .map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        </FormFieldShell>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <FormFieldShell label="Liên kết tham chiếu" error={form.formState.errors.externalReferenceUrl?.message}>
+          <Input placeholder="https://creativecenter.tiktok.com/..." {...form.register("externalReferenceUrl")} />
         </FormFieldShell>
         <FormFieldShell label="Trạng thái" required error={form.formState.errors.status?.message}>
           <Select
@@ -160,6 +272,13 @@ export function ProductForm() {
 
       <div className="grid gap-4 md:grid-cols-2">
         <FormFieldShell
+          label="Ghi chú dữ liệu"
+          description="Dùng cho provenance: ví dụ nguồn nào, đã đối chiếu tới đâu, còn điểm nào cần rà lại."
+          error={form.formState.errors.notes?.message}
+        >
+          <Textarea rows={4} placeholder="Ví dụ: đối chiếu bằng ảnh chụp Creative Center ngày 05/04." {...form.register("notes")} />
+        </FormFieldShell>
+        <FormFieldShell
           label="Mô tả ngắn"
           description="10 đến 300 ký tự, nên mô tả lợi ích dễ hiểu bằng tiếng Việt tự nhiên."
           required
@@ -171,18 +290,19 @@ export function ProductForm() {
             {...form.register("shortDescription")}
           />
         </FormFieldShell>
-        <FormFieldShell
-          label="Note nội bộ"
-          description="Tối đa 1000 ký tự, chỉ nhập nội dung có nghĩa."
-          error={form.formState.errors.internalNote?.message}
-        >
-          <Textarea
-            rows={4}
-            placeholder="Ghi chú phục vụ nghiên cứu nội bộ."
-            {...form.register("internalNote")}
-          />
-        </FormFieldShell>
       </div>
+
+      <FormFieldShell
+        label="Ghi chú nội bộ"
+        description="Tối đa 1000 ký tự, tách biệt với phần dữ liệu tham chiếu ở trên."
+        error={form.formState.errors.internalNote?.message}
+      >
+        <Textarea
+          rows={4}
+          placeholder="Ghi chú phục vụ scoring, angle test hoặc lưu ý khi quay."
+          {...form.register("internalNote")}
+        />
+      </FormFieldShell>
 
       <div className="flex justify-end">
         <Button type="submit" disabled={form.formState.isSubmitting}>

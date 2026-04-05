@@ -54,6 +54,7 @@ export default async function DraftDetailPage({
         <TagChip tone="warning">Đang quay</TagChip>
         <TagChip tone="info">Có subtitle package</TagChip>
         <TagChip>Xuất được 5 file</TagChip>
+        <TagChip tone="warning">Gợi ý nội bộ</TagChip>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
@@ -72,6 +73,7 @@ export default async function DraftDetailPage({
 
           <GlassPanel className="space-y-4">
             <h2 className="text-lg font-semibold text-foreground">Next step recommendation</h2>
+            <TagChip tone="warning">Gợi ý nội bộ</TagChip>
             <div className="space-y-3">
               {[
                 "Khóa shot mở đầu và góc quay chính trước khi chuyển script cho người quay.",
