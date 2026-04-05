@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kính Affiliate Studio
 
-## Getting Started
+Web app tiếng Việt, production-minded, mobile-first cho vận hành content affiliate gồm 4 module trong cùng một hệ thống:
 
-First, run the development server:
+1. Nghiên cứu sản phẩm / trend affiliate
+2. Tạo script video hàng loạt
+3. Chuẩn bị video nháp / shot list / subtitle package
+4. Dashboard theo dõi hiệu suất content affiliate
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Stack
+
+- Next.js 16 App Router
+- TypeScript strict mode
+- Tailwind CSS v4
+- shadcn/ui
+- Prisma + SQLite
+- React Hook Form + Zod
+- Recharts
+- Framer Motion
+- Metadata API của Next.js
+- ESLint + Prettier
+
+## Cấu trúc thư mục
+
+```txt
+src/
+  app/
+  components/
+  config/
+  features/
+  hooks/
+  lib/
+  server/
+  types/
+prisma/
+docs/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Chạy local
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npx prisma generate
+npm run prisma:seed
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+App mặc định chạy tại `http://localhost:3000`.
 
-## Learn More
+## Build production
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+npm run start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Script quan trọng
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `npm run dev`: chạy local
+- `npm run build`: build production
+- `npm run start`: chạy bản build
+- `npm run lint`: lint code
+- `npm run format`: format code
+- `npm run prisma:generate`: generate Prisma client
+- `npm run prisma:migrate`: tạo migration mới nếu mở rộng schema
+- `npm run prisma:seed`: seed dữ liệu mẫu
+- `npm run db:seed`: generate client rồi seed
 
-## Deploy on Vercel
+## Dữ liệu mẫu
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Seed hiện tại tạo:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 20 sản phẩm
+- 15 trend
+- 3 template kịch bản
+- 20 bộ script
+- 20 project video nháp
+- 100 bản ghi hiệu suất video
+
+## URL chính
+
+- `/`
+- `/dashboard`
+- `/research/products`
+- `/research/products/[id]`
+- `/research/trends`
+- `/scripts`
+- `/scripts/[id]`
+- `/drafts`
+- `/drafts/[id]`
+- `/analytics`
+- `/analytics/videos`
+- `/analytics/videos/[id]`
+- `/reports`
+- `/settings`
+
+## Lưu ý triển khai
+
+- SQLite đang dùng cho bản đầu để local nhanh.
+- Prisma schema đã tách đủ để nâng cấp lên Postgres khi cần.
+- MVP đang ở chế độ single-user, chưa gắn connector TikTok.
+- Toàn bộ form đều validate client-side và server-side bằng Zod.
+
+## Tài liệu đi kèm
+
+- [UI system](./docs/UI_SYSTEM.md)
+- [Form validation](./docs/FORM_VALIDATION_RULES.md)
+- [SEO notes](./docs/SEO_NOTES.md)
+- [Architecture](./docs/ARCHITECTURE.md)
+- [Content guide](./docs/CONTENT_GUIDE_VI.md)

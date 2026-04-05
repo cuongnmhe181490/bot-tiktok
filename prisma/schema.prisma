@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductStatus {
+  MOI
+  DANG_TEST
+  DANG_CHAY
+  THANG
+  LOAI_BO
+}
+
+enum TrendType {
+  HOOK
+  FORMAT
+  SOUND
+  GOC_NHIN
+  KICH_BAN
+  CHUYEN_DOI
+}
+
+enum ToneType {
+  THUC_TE
+  TINH_TE
+  BAN_HANG_MEM
+  CHIA_SE
+  SO_SANH
+  CANH_BAO
+}
+
+enum GoalType {
+  TANG_CLICK
+  TANG_DON
+  TANG_WATCH_TIME
+  TANG_TIN_CAY
+  RE_TEST
+}
+
+enum VideoStatus {
+  NHAP
+  DA_DANG
+  THANG
+  KHONG_HIEU_QUA
+  TAM_DUNG
+}
+
+model ScoringSettings {
+  id                String   @id @default("scoring-default")
+  easeWeight        Int      @default(20)
+  competitionWeight Int      @default(20)
+  saturationWeight  Int      @default(15)
+  offerWeight       Int      @default(25)
+  commissionWeight  Int      @default(20)
+  updatedAt         DateTime @updatedAt
+}
+
+model Product {
+  id                 String        @id @default(cuid())
+  name               String
+  slug               String        @unique
+  productUrl         String
+  source             String
+  category           String
+  originalPrice      Float
+  salePrice          Float
+  discountPercent    Int
+  commissionPercent  Float
+  estimatedCommission Float
+  rating             Float
+  reviewCount        Int
+  shopName           String
+  voucher            String?
+  freeship           Boolean       @default(false)
+  importedAt         DateTime
+  shortDescription   String
+  internalNote       String?
+  status             ProductStatus @default(MOI)
+  totalScore         Int
+  easeOfFilming      Int
+  competitionLevel   Int
+  saturationLevel    Int
+  offerAttractiveness Int
+  scoreBreakdown     String
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  scripts            ScriptDraft[]
+  videos             VideoPerformance[]
+}
+
+model Trend {
+  id              String    @id @default(cuid())
+  name            String
+  trendType       TrendType
+  description     String
+  suitableNiche   String
+  referenceUrl    String?
+  heatLevel       Int
+  applicability   Int
+  saturationLevel Int
+  discoveredAt    DateTime
+  note            String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model ScriptTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  structure   String
+  tone        ToneType
+  createdAt   DateTime @default(now())
+  scripts     ScriptDraft[]
+}
+
+model ScriptDraft {
+  id                String    @id @default(cuid())
+  title             String
+  audience          String
+  painPoints        String
+  strengths         String
+  notes             String?
+  tone              ToneType
+  goal              GoalType
+  durationSeconds   Int
+  hooks             String
+  angles            String
+  voiceOvers        String
+  shotLists         String
+  captions          String
+  ctas              String
+  teleprompter      String
+  subtitleReady     String
+  safetyCheck       String
+  bestVersion       Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  productId         String
+  templateId        String?
+  product           Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  template          ScriptTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+}
+
+model DraftProject {
+  id               String    @id @default(cuid())
+  title            String
+  productName      String
+  rawScript        String
+  splitScript      String
+  suggestedTiming  String
+  sceneSuggestions String
+  overlayTexts     String
+  shootingChecklist String
+  editingChecklist String
+  scriptTxt        String
+  subtitleSrt      String
+  shotlistMd       String
+  checklistMd      String
+  metadataJson     String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model VideoPerformance {
+  id              String      @id @default(cuid())
+  title           String
+  publishedAt     DateTime
+  videoUrl        String
+  hook            String
+  angle           String
+  format          String
+  durationSeconds Int
+  captionType     String
+  ctaType         String
+  note            String?
+  views           Int
+  avgWatchTime    Float
+  completionRate  Float
+  clicks          Int
+  ctr             Float
+  orders          Int
+  revenue         Float
+  commission      Float
+  status          VideoStatus @default(NHAP)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  productId       String
+  productGroup    String
+  product         Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
