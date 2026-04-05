@@ -18,22 +18,24 @@ export function SectionHeader({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between",
+        "flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between",
         className,
       )}
     >
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {eyebrow ? (
-          <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground sm:text-xs">
             {eyebrow}
           </p>
         ) : null}
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold text-foreground sm:text-3xl">{title}</h1>
+          <h1 className="text-[1.65rem] font-semibold leading-tight text-foreground sm:text-3xl">
+            {title}
+          </h1>
           {description ? <p className="max-w-2xl">{description}</p> : null}
         </div>
       </div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+      {action ? <div className="shrink-0 self-start sm:self-auto">{action}</div> : null}
     </div>
   );
 }

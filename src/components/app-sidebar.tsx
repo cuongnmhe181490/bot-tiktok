@@ -8,11 +8,20 @@ import { getWorkspaceRouteContext, sidebarNavItems } from "@/config/workspace-ro
 import { cn } from "@/lib/utils";
 
 export function AppSidebar() {
+  return <AppSidebarContent />;
+}
+
+export function AppSidebarContent({ mobile = false }: { mobile?: boolean }) {
   const pathname = usePathname();
   const context = getWorkspaceRouteContext(pathname);
 
   return (
-    <aside className="glass-panel hidden h-[calc(100vh-2rem)] w-[300px] shrink-0 flex-col justify-between rounded-[2rem] p-5 lg:flex">
+    <aside
+      className={cn(
+        "glass-panel h-[calc(100vh-2rem)] w-[300px] shrink-0 flex-col justify-between rounded-[2rem] p-5",
+        mobile ? "flex h-full w-full rounded-[1.75rem] p-4" : "hidden lg:flex",
+      )}
+    >
       <div className="space-y-6">
         <div className="space-y-2">
           <div className="glass-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs text-muted-foreground">

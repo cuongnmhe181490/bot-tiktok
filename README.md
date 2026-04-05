@@ -94,6 +94,12 @@ Seed hiện tại tạo:
 - `/reports`
 - `/settings`
 
+## Ghi chú giao diện
+
+- App shell theo ngữ cảnh từng route, không dùng cùng một hero/header cho mọi màn.
+- Mobile ưu tiên sheet cho điều hướng và filter; các bảng quan trọng có chế độ thẻ xếp chồng để quét nhanh trên màn hình nhỏ.
+- Các trang chi tiết `/research/products/[id]`, `/scripts/[id]`, `/drafts/[id]`, `/analytics/videos/[id]` được thiết kế như workspace detail page, không còn là bản xem rút gọn.
+
 ## Lưu ý triển khai
 
 - SQLite đang dùng cho bản đầu để local nhanh.

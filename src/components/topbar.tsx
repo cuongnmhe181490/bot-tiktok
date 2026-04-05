@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { ChevronRight, Menu, MoonStar, Search, SunMedium } from "lucide-react";
 import { useTheme } from "next-themes";
 import { getWorkspaceRouteContext } from "@/config/workspace-routes";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebarContent } from "@/components/app-sidebar";
 import {
   Sheet,
   SheetContent,
@@ -32,11 +32,14 @@ export function Topbar() {
               <span className="sr-only">Mở điều hướng</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="border-none bg-transparent p-3 shadow-none">
+          <SheetContent
+            side="left"
+            className="w-[88vw] max-w-[360px] border-none bg-transparent p-2.5 shadow-none"
+          >
             <SheetHeader className="sr-only">
               <SheetTitle>Điều hướng chính</SheetTitle>
             </SheetHeader>
-            <AppSidebar />
+            <AppSidebarContent mobile />
           </SheetContent>
         </Sheet>
 

@@ -1,6 +1,6 @@
 import { ProductStatus } from "@prisma/client";
 import { getDb } from "@/server/db";
-import { demoProducts } from "@/server/demo-data";
+import { demoProducts, demoScriptDrafts, demoVideoPerformance } from "@/server/demo-data";
 import { readOrDemo } from "@/server/read-or-demo";
 import { slugify } from "@/lib/sanitize";
 import { computeProductScore } from "@/features/research/products/helpers";
@@ -33,7 +33,22 @@ export async function getProductById(id: string) {
           },
         },
       }),
-    () => null,
+    () => {
+      const product = demoProducts.find((item) => item.id === id);
+      if (!product) return null;
+
+      return {
+        ...product,
+        scripts: demoScriptDrafts
+          .filter((item) => item.productId === id)
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+          .slice(0, 5),
+        videos: demoVideoPerformance
+          .filter((item) => item.productId === id)
+          .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+          .slice(0, 8),
+      };
+    },
   );
 }
 

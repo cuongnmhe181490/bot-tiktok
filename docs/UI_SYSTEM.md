@@ -54,5 +54,7 @@
 
 - mobile-first
 - sidebar desktop, sheet trên mobile
-- bảng luôn có horizontal scroll an toàn
+- sheet điều hướng trên mobile chỉ chiếm chiều ngang vừa đủ, overlay mờ nhẹ để không tạo cảm giác nặng
+- `FilterBar` trên mobile chuyển sang sheet riêng, luôn hiển thị tóm tắt filter đang bật
+- `DataTable` có chế độ thẻ xếp chồng trên mobile cho các bảng quét nhanh, chỉ giữ table đầy đủ từ `md` trở lên
 - form chia cột khi đủ rộng, còn lại xếp một cột

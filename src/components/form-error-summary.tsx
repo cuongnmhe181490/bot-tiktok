@@ -8,7 +8,7 @@ export function FormErrorSummary({ messages }: FormErrorSummaryProps) {
   return (
     <div
       aria-live="polite"
-      className="rounded-2xl border border-rose-200/80 bg-rose-50/75 px-4 py-3 text-sm text-rose-700 dark:border-rose-400/20 dark:bg-rose-950/20 dark:text-rose-200"
+      className="rounded-2xl border border-rose-200/80 bg-rose-50/75 px-4 py-3.5 text-sm text-rose-700 dark:border-rose-400/20 dark:bg-rose-950/20 dark:text-rose-200"
     >
       <p className="font-medium">Biểu mẫu chưa thể gửi.</p>
       <ul className="mt-2 space-y-1">
